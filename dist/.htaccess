@@ -1,0 +1,20 @@
+Options -Indexes
+DirectorySlash Off
+
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=301,L]
+#send no handle to root
+RewriteRule ^user/?$ / [R=301,L]
+#strip trailing slash
+RewriteRule (.+)/$ /$1 [R=301,L]
+RewriteRule ^user/([^/]*)$ /?user=$1 [END,L]
+RewriteRule ^user/([^/]*)$ /index.html?user=$1 [END,L]
+
+RewriteRule ^user/([^/]*)/followers$ /followers.html?user=$1 [END,L]
+
+# Redirect from /?user=handle to /user/handle
+RewriteCond %{QUERY_STRING} ^user=([^&]+)$
+RewriteRule ^$ /user/%1? [R=301,L]
+RewriteCond %{QUERY_STRING} ^user=([^&]+)$
+RewriteRule ^index\.html$ /user/%1? [R=301,L]
