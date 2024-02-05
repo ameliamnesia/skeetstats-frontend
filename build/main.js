@@ -7,7 +7,7 @@ const url = new URL(urlString);
 const handle = url.pathname.split("/").pop() || '';
 // Remove '@', apostrophes, and quotation marks from the handle
 const cleanedHandle = handle.replace(/[@'"]/g, '');
-export const user = cleanedHandle || 'bsky.app';
+export const user = cleanedHandle || 'skeetstats.xyz';
 import { renderProfile } from './profile.js';
 import { createSuggestedTable } from "./suggested.js";
 import { createTableFromStatsData } from "./stats.js";

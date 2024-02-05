@@ -4,7 +4,7 @@ const split = url.pathname.split("/");
 const handle = split[2]
 // Remove '@', apostrophes, and quotation marks from the handle
 const cleanedHandle = handle.replace(/[@'"]/g, '');
-const user: string = cleanedHandle || 'bsky.app';
+const user: string = cleanedHandle || 'skeetstats.xyz';
 let cursor: string | undefined;
 import { renderProfile } from './profile.js';
 import { fetchFollowers } from './followers.js';

@@ -284,7 +284,7 @@ const split = url.pathname.split("/");
 const handle = split[2];
 // Remove '@', apostrophes, and quotation marks from the handle
 const cleanedHandle = handle.replace(/[@'"]/g, '');
-const user = cleanedHandle || 'bsky.app';
+const user = cleanedHandle || 'skeetstats.xyz';
 // Get the pagination button element from the HTML
 const paginationButton = document.getElementById('paginateButton');
 // Add a click event listener to the pagination button
