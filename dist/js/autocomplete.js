@@ -5,7 +5,7 @@ searchInput.addEventListener('input', async (event) => {
   const query = event.target.value;
 
   // Activate autocomplete only if the input has at least 5 characters
-  if (query.length >= 5) {
+  if (query.length >= 4) {
     searchInput.autocomplete = 'off';
     try {
       const response = await fetch('https://skeetstats.xyz:8443/autocomplete', {
