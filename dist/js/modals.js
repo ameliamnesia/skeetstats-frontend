@@ -56,7 +56,39 @@ document.getElementById('modalsDiv').innerHTML = `
     </div>
   </div>
   `
-  document.getElementById('footerLinks').innerHTML = `
+  + //supporters modal
+  `
+  <div class="modal fade" id="supportersModal" tabindex="-1" aria-labelledby="supportersModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="patreonModalLabel">supporters</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-body">
+      <ul class="list-group list-group-flush">
+      <li class="list-group-item"><a target="_blank" href="https://bsky.app/profile/did:plc:c3c54quc4xysc6khc7jeppns">phoebe</a></li>
+      <li class="list-group-item"><a target="_blank" href="https://bsky.app/profile/did:plc:wzsilnxf24ehtmmc3gssy5bu">mark</a></li>
+      <li class="list-group-item"><a target="_blank" href="https://bsky.app/profile/did:plc:yj2pd3wzceorf3bcawceoqfk">imogen</a></li>
+      <li class="list-group-item"><a target="_blank" href="https://bsky.app/profile/did:plc:f5lxswkf3gcjwaamrija5t6i">hesse</a></li>
+      </ul>
+      </div>
+      <div class="modal-footer pb-0 mb-0">
+      <div class="container-fluid">
+        <p class="w-100 text-break text-center text-body small" id="modalText"><em>
+        this project is ad-free and any support is greatly appreciated.<br><br> please send me a message on whichever platform with your bluesky handle if you would like to be featured here.<br>
+        </em></p>
+        <p class="text-center text-body small">
+        <a target="_blank" href="https://ko-fi.com/ameliamnesia" class="btn btn-sm btn-outline-success">ko-fi</a>
+        <a target="_blank" href="https://www.patreon.com/SkeetStats" class="btn btn-sm btn-outline-success">patreon</a>
+        </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  `
+document.getElementById('footerLinks').innerHTML = `
   <ul class="nav justify-content-center py-1 sticky-bottom" id="footer">
   <li class="nav-item">
     <div class="btn-group">

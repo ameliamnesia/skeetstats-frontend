@@ -70,6 +70,9 @@ document.getElementById('topnavbar').innerHTML = `
               </ul>
             </li>
             <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#supportersModal" href="#">supporters</a>
+          </li>
+            <li class="nav-item">
               <a class="nav-link" data-bs-toggle="modal" data-bs-target="#aboutModal" href="#">about</a>
             </li>
           </ul>
@@ -77,14 +80,14 @@ document.getElementById('topnavbar').innerHTML = `
       </div>
     </div>
   `
-  function submitSearch(event) {
-    event.preventDefault();
-    const searchInputRaw = document.getElementById('searchInput').value.trim();
+function submitSearch(event) {
+  event.preventDefault();
+  const searchInputRaw = document.getElementById('searchInput').value.trim();
 
-    if (searchInput !== '') {
-      // Strip '@', apostrophes, and quotation marks
-      const cleanSearchInputValue = searchInputRaw.replace(/[@'"]/g, '');
-      const url = `https://skeetstats.xyz/user/${encodeURIComponent(cleanSearchInputValue)}`;
-      window.location.href = url;
-    }
+  if (searchInput !== '') {
+    // Strip '@', apostrophes, and quotation marks
+    const cleanSearchInputValue = searchInputRaw.replace(/[@'"]/g, '');
+    const url = `https://skeetstats.xyz/user/${encodeURIComponent(cleanSearchInputValue)}`;
+    window.location.href = url;
   }
+}

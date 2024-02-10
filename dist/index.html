@@ -19,6 +19,7 @@
       }
     }
 </script>
+<script data-goatcounter="https://skeetstats.goatcounter.com/count" async src="https://skeetstats.xyz/js/goat.js"></script>
 </head>
 <body>
   <nav class="navbar navbar-dark py-1 sticky-top bg-primary" id="topnavbar"></nav>
@@ -78,10 +79,10 @@
       <div class="col-lg-6" id="foldiv">
         <div class="card">
           <div class="card-header justify-content-between align-items-center d-flex bg-secondary">
-            <h6 class="m-0 text-center text-body flex-grow-1">posts</h6>
+            <h6 class="m-0 text-center text-body flex-grow-1">total posts</h6>
           </div>
           <div class="card-body justify-content-center">
-            <div>
+            <div style="min-height: 350px;">
               <canvas id="posts-chart-container"></canvas>
               <!-- Chart will be rendered here -->
             </div>          
@@ -90,10 +91,12 @@
           <br>
           <div class="card">
             <div class="card-header justify-content-between align-items-center d-flex bg-secondary">
-              <h6 class="m-0 text-center text-body flex-grow-1">followers/following</h6>
+              <h6 class="m-0 text-center text-body flex-grow-1">
+                followers/following 
+              </h6>
             </div>
             <div class="card-body justify-content-center">
-              <div>
+              <div style="min-height: 350px;">
                 <canvas id="followers-chart-container"></canvas>
                 <!-- Chart will be rendered here -->
               </div>
