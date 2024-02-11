@@ -19,7 +19,7 @@
       }
     }
 </script>
-<script data-goatcounter="https://skeetstats.goatcounter.com/count" async src="https://skeetstats.xyz/js/goat.js"></script>
+<script data-goatcounter="https://goat.skeetstats.xyz/count" async src="https://skeetstats.xyz/js/goat.js"></script>
 </head>
 <body>
   <nav class="navbar navbar-dark py-1 sticky-top bg-primary" id="topnavbar"></nav>
@@ -29,7 +29,7 @@
       <div class="col-lg-6">
         <div id="leftcol">
           <div class="card" id="profileCard">
-            <div class="card-header align-items-center p-0 m-0 bg-secondary text-center" id="userName">
+            <div class="card-header align-items-center p-0 m-0 bg-dark text-center" id="userName">
             </div>
             <div class="card-body pb-1 p-0 m-0">
               <table class="table mb-0 table-sm table-borderless" id="userTable">
@@ -39,9 +39,9 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center p-0 m-0 bg-secondary">
-              <h6 class="m-0 text-center text-body flex-grow-1">7 day stats</h6>
-              <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#statsCollapse" aria-expanded="true">
+            <div class="card-header d-flex justify-content-between align-items-center p-0 m-0 bg-dark">
+              <h5 class="m-0 text-center text-body flex-grow-1">7 day stats</h5>
+              <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#statsCollapse" aria-expanded="true">
                 <span class="text-body align-middle">
                   <i class="bi bi-chevron-double-up"></i>&nbsp;&nbsp; hide <i class="bi bi-chevron-double-up"></i>
                 </span>
@@ -50,15 +50,15 @@
             <div class="collapse show" id="statsCollapse">
               <div class="card-body p-0 m-0">
                 <!-- Table for stats -->
-                <table class="table table-secondary mb-0 text-center w-100 table-sm align-middle table-borderless" id="statsTable">
+                <table class="table table-dark mb-0 text-center w-100 table-sm align-middle table-borderless" id="statsTable">
                 </table>
               </div>
             </div>
           </div>
           <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center p-0 m-0 bg-secondary">
-              <h6 class="m-0 text-center text-body flex-grow-1">suggested follows</h6>
-              <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
+            <div class="card-header d-flex justify-content-between align-items-center p-0 m-0 bg-dark">
+              <h5 class="m-0 text-center text-body flex-grow-1">suggested follows</h5>
+              <button class="btn btn-dark" type="button" data-bs-toggle="collapse"
                 data-bs-target="#suggestionsCollapse" aria-expanded="true">
                 <span class="text-body align-middle">
                   <i class="bi bi-chevron-double-up"></i>&nbsp;&nbsp; hide <i class="bi bi-chevron-double-up"></i></span>
@@ -78,8 +78,8 @@
       </div>
       <div class="col-lg-6" id="foldiv">
         <div class="card">
-          <div class="card-header justify-content-between align-items-center d-flex bg-secondary">
-            <h6 class="m-0 text-center text-body flex-grow-1">total posts</h6>
+          <div class="card-header justify-content-between align-items-center d-flex bg-dark">
+            <h5 class="m-0 text-center text-body flex-grow-1">total posts</h5>
           </div>
           <div class="card-body justify-content-center">
             <div style="min-height: 350px;">
@@ -90,10 +90,10 @@
           </div>
           <br>
           <div class="card">
-            <div class="card-header justify-content-between align-items-center d-flex bg-secondary">
-              <h6 class="m-0 text-center text-body flex-grow-1">
+            <div class="card-header justify-content-between align-items-center d-flex bg-dark">
+              <h5 class="m-0 text-center text-body flex-grow-1">
                 followers/following 
-              </h6>
+              </h5>
             </div>
             <div class="card-body justify-content-center">
               <div style="min-height: 350px;">
@@ -107,8 +107,9 @@
     </div>
   </div>
   <div id="modalsDiv"></div>
-  <script src="https://skeetstats.xyz/js/darkmode.js"></script>
+  <script src="https://skeetstats.xyz/js/theme.js"></script>
   <script src="https://skeetstats.xyz/js/collapse-suggest.js"></script>
+  <script src="https://skeetstats.xyz/js/collapse-stats.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script type="module" defer src="https://skeetstats.xyz/js/autocomplete.js"></script>
   <script type="module" defer src="https://skeetstats.xyz/main.rolled.js"></script>
