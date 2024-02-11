@@ -14,7 +14,12 @@ RewriteRule ^user/([^/]*)$ /index.html?user=$1 [END,L]
 RewriteRule ^user/([^/]*)/followers$ /followers.html?user=$1 [END,L]
 
 # Redirect from /?user=handle to /user/handle
+#RewriteCond %{QUERY_STRING} ^/?user=([^&]+)$
+#RewriteRule ^$ /user/%1? [R=301,L]
+# Redirect from /?user=handle to /user/handle
 RewriteCond %{QUERY_STRING} ^user=([^&]+)$
 RewriteRule ^$ /user/%1? [R=301,L]
 RewriteCond %{QUERY_STRING} ^user=([^&]+)$
 RewriteRule ^index\.html$ /user/%1? [R=301,L]
+
+ErrorDocument 404 /user

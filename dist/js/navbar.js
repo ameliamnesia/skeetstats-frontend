@@ -28,7 +28,7 @@ document.getElementById('topnavbar').innerHTML = `
         <li>
         <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
         <i class="bi bi-circle-half"></i>
-        <span class="ms-2">auto</span>
+        <span class="ms-2">auto (system)</span>
         </button>
       </li>
       </ul>
