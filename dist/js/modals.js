@@ -8,20 +8,20 @@ document.getElementById('modalsDiv').innerHTML = `
         </div>
         <div class="modal-body text-body">
           <p class="text-center">
-            created by <a href="https://bsky.app/profile/ameliamnesia.xyz" target="_blank">ameliamnesia.xyz</a>
+            created by <a class="link-info" href="https://bsky.app/profile/ameliamnesia.xyz" target="_blank">ameliamnesia.xyz</a>
           </p>
           <p class="text-center"><strong>
             to use the tracking feature create a post or reply tagging the account and giving it a command:
             </strong></p>
           <ul class="list">
             <li>
-              <i><a href="https://bsky.app/profile/skeetstats.xyz" target="_blank">@skeetstats.xyz</a> !optin</i>
+              <i><a class="link-info" href="https://bsky.app/profile/skeetstats.xyz" target="_blank">@skeetstats.xyz</a> !optin</i>
             </li>
             <li>
-              <i><a href="https://bsky.app/profile/skeetstats.xyz" target="_blank">@skeetstats.xyz</a> !optout</i>
+              <i><a class="link-info" href="https://bsky.app/profile/skeetstats.xyz" target="_blank">@skeetstats.xyz</a> !optout</i>
             </li>
             <li>
-              <i><a href="https://bsky.app/profile/skeetstats.xyz" target="_blank">@skeetstats.xyz</a> !status</i>
+              <i><a class="link-info" href="https://bsky.app/profile/skeetstats.xyz" target="_blank">@skeetstats.xyz</a> !status</i>
             </li>
           </ul>
           <hr>
@@ -76,9 +76,9 @@ document.getElementById('modalsDiv').innerHTML = `
       </div>
       <div class="modal-footer pb-0 mb-0">
       <div class="container-fluid">
-        <p class="w-100 text-break text-center text-body small" id="modalText"><em>
+        <p class="w-100 text-break text-center text-body" id="modalText">
         this project is ad-free and any support is greatly appreciated.<br><br> please send me a message on whichever platform with your bluesky handle if you would like to be featured here.<br>
-        </em></p>
+        </p>
         <p class="text-center text-body small">
         <a target="_blank" href="https://ko-fi.com/ameliamnesia" class="btn btn-sm btn-outline-success">ko-fi</a>
         <a target="_blank" href="https://www.patreon.com/SkeetStats" class="btn btn-sm btn-outline-success">patreon</a>

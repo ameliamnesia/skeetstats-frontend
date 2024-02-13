@@ -25,10 +25,9 @@ const data = {
   const link = document.createElement('a');
   link.href = data.linkUrl;
   link.textContent = trunchandle;
-  link.classList.add("text-body")
   userName.innerHTML = ''; // Clear existing content
   link.style.fontWeight = 'bold';
-  link.classList.add("fs-4", "text-break", "link-info", "list-link")
+  link.classList.add("fs-4", "text-break", "link-body-emphasis", "list-link")
   userName.appendChild(link);
   
   // Create a new row for the table

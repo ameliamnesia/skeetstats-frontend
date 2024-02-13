@@ -52,7 +52,7 @@ document.getElementById('topnavbar').innerHTML = `
     </button>
   </div>
   </div>
-  <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar"
+  <div class="offcanvas offcanvas-end text-bg-dark bg-primary" tabindex="-1" id="offcanvasNavbar"
     aria-labelledby="offcanvasNavbarLabel">
     <div class="offcanvas-header">
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
