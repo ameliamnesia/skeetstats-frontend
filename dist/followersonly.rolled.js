@@ -8,10 +8,7 @@ async function getStats(handle) {
     const respData = await response.json();
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
-        const month = ('0' + (uglyDate.getMonth() + 1)).slice(-2); // Adding leading zero if needed
-        const day = ('0' + uglyDate.getDate()).slice(-2); // Adding leading zero if needed
-        const year = uglyDate.getFullYear().toString().slice(-2); // Getting last two digits of the year
-        const prettyDate = `${month}/${day}/${year}`;
+        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         array.date = prettyDate;
     });
     const stats = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
@@ -261,7 +258,7 @@ async function createTableFromStatsData(user) {
                     row.appendChild(cell);
                 }
             }
-            table.appendChild(row);
+            tableBody.appendChild(row);
         });
         let checkForZero = String(statsData.length);
         if (checkForZero == '0') {
@@ -271,7 +268,7 @@ async function createTableFromStatsData(user) {
             noDataCell.classList.add("text-body");
             noDataCell.textContent = 'no data yet, if the user is opted in it will update daily at 11PM EST';
             row.appendChild(noDataCell);
-            table.appendChild(row);
+            tableBody.appendChild(row);
         }
     }
     table.classList.add('table', 'table-striped', 'table-hover');

@@ -40,7 +40,7 @@ document.getElementById('topnavbar').innerHTML = `
           <span class="input-group-text" id="basic-addon1">@</span>
           <input type="text" class="form-control" placeholder="yourhandle.bsky.app" autocomplete="on"
             aria-label="Search" aria-describedby="search-btn" id="searchInput">
-            <button class="btn btn-sm btn-secondary" type="submit" id="search-btn"><i class="bi bi-search"></i></button>
+            <button class="btn btn-sm btn-dark" type="submit" id="search-btn"><i class="bi bi-search"></i></button>
         </div>
       </form>
       <div id="autocompleteDropdown"></div>
@@ -102,7 +102,7 @@ document.getElementById('topnavbar').innerHTML = `
     var currentUrl = window.location.href;
     // Extract the "handle" from the URL
     var urlSplit = currentUrl.split('/');
-    var urlHandle = urlSplit[4] ?? 'bsky.app';
+    var urlHandle = urlSplit[4] ?? 'skeetstats.xyz';
     // Update the href attributes with the handle value
     document.getElementById('homeLink').href = pageUrl + '/user/' + urlHandle;
     document.getElementById('followersLink').href = pageUrl + '/user/' + urlHandle + '/followers';

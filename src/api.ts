@@ -18,10 +18,7 @@ export async function getStats(handle: string): Promise<StatsData[]> {
   const respData = await response.json();
   respData.forEach(async (array, index) => {
     const uglyDate = new Date(array.date);
-    const month = ('0' + (uglyDate.getMonth() + 1)).slice(-2); // Adding leading zero if needed
-    const day = ('0' + uglyDate.getDate()).slice(-2); // Adding leading zero if needed
-    const year = uglyDate.getFullYear().toString().slice(-2); // Getting last two digits of the year
-    const prettyDate = `${month}/${day}/${year}`;
+    const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     array.date = prettyDate;
   });
   const stats = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
@@ -34,14 +31,18 @@ export async function getCharts(handle: string): Promise<StatsData[]> {
   const respData = await response.json();
   respData.forEach(async (array, index) => {
     const uglyDate = new Date(array.date);
-    const month = ('0' + (uglyDate.getMonth() + 1)).slice(-2); // Adding leading zero if needed
-    const day = ('0' + uglyDate.getDate()).slice(-2); // Adding leading zero if needed
-    const year = uglyDate.getFullYear().toString().slice(-2); // Getting last two digits of the year
-    const prettyDate = `${month}/${day}/${year}`;
+    const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     array.date = prettyDate;
   });
   const stats = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
   return stats
+}
+
+export async function getMax(handle: string): Promise<any> {
+  let resdid = await handleOrDid(handle)
+  const response = await fetch(`${baseApiUrl}/api/mostincreased/${resdid}`)
+  const data = await response.json();
+  return data
 }
 
 export async function profileInfo(handle: string): Promise<any> {
@@ -82,6 +83,7 @@ export async function handleOrDid(handle: string) {
       resdid = await response.json();
     } catch (error) {
       console.log(`Error resolving handle: ${error.message}`);
+      window.location.href = 'https://skeetstats.xyz/error'
     }
   }
   return resdid

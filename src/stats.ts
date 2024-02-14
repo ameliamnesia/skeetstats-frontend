@@ -36,7 +36,7 @@ export async function createTableFromStatsData(user) {
               row.appendChild(cell);
             }
           }
-          table.appendChild(row);
+          tableBody.appendChild(row);
         });
       let checkForZero = String(statsData.length)
       if(checkForZero == '0') {
@@ -46,7 +46,7 @@ export async function createTableFromStatsData(user) {
         noDataCell.classList.add("text-body")
         noDataCell.textContent = 'no data yet, if the user is opted in it will update daily at 11PM EST'
         row.appendChild(noDataCell)
-        table.appendChild(row);
+        tableBody.appendChild(row);
       }
     }
     table.classList.add('table', 'table-striped', 'table-hover');
