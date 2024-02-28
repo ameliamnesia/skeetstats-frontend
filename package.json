@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build:main": "rollup build/main.js -o dist/main.rolled.js -f es",
+    "build:charts": "rollup build/makecharts.js -o dist/charts.rolled.js -f es",
     "build:followers": "rollup build/followersOnly.js -o dist/followersonly.rolled.js -f es"
   },
   "devDependencies": {

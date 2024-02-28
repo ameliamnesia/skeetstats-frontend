@@ -1,8 +1,60 @@
 import { Chart, registerables } from 'chart.js/auto';
-import { getCharts } from './api.js';
+
+const baseApiUrl = 'https://skeetstats.xyz:8443';
+const regex = /^did:plc:[^@'"\,]+/;
+async function getCharts(handle) {
+    let resdid = await handleOrDid(handle);
+    // First API call to fetch 30 days
+    const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
+    const respData = await response.json();
+    // Process data from 30 day
+    respData.forEach(async (array, index) => {
+        const uglyDate = new Date(array.date);
+        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        array.date = prettyDate;
+    });
+    const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
+    // Second API call to fetch monthly data
+    const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
+    const monthData = await monthResponse.json();
+    // Process data from monthly call
+    monthData.forEach(async (array, index) => {
+        const uglyDate = new Date(array.date);
+        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
+        array.date = prettyDate;
+    });
+    return { charts: chartsData, monthData };
+}
+const handleCache = {};
+async function handleOrDid(handle) {
+    if (handleCache[handle]) {
+        return handleCache[handle];
+    }
+    let resdid;
+    let strippedHandle = handle.replace(/[@'"]/g, '');
+    if (regex.test(handle)) {
+        const resultString = handle.replace(regex, (match) => match.replace(/[@'"\,]/g, ''));
+        resdid = resultString;
+    }
+    else {
+        try {
+            const response = await fetch(`${baseApiUrl}/api/resolve/${strippedHandle}`, { method: 'POST' });
+            if (!response.ok) {
+                console.log(`Failed to resolve ${strippedHandle}`);
+            }
+            resdid = await response.json();
+        }
+        catch (error) {
+            console.log(`Error resolving handle: ${error.message}`);
+        }
+    }
+    handleCache[handle] = Promise.resolve(resdid);
+    return resdid;
+}
+
 // Register necessary modules
 Chart.register(...registerables);
-export async function makeCharts(user) {
+async function makeCharts(user) {
     const chartData = await getCharts(user);
     const labels = chartData.charts.map(item => item.date);
     const monthLabels = chartData.monthData.map(item => item.date);
@@ -137,7 +189,7 @@ export async function makeCharts(user) {
     const followersMonthCanvas = document.getElementById('monthly-chart-container');
     const postsMonthCanvas = document.getElementById('monthly-posts-container');
     // Create the first chart for followersDataset
-    const followersChart = new Chart(followersCanvas, {
+    new Chart(followersCanvas, {
         type: 'line',
         data: {
             labels: labels,
@@ -147,7 +199,7 @@ export async function makeCharts(user) {
         options: options
     });
     // Create the second chart for postsDataset
-    const postsChart = new Chart(postsCanvas, {
+    new Chart(postsCanvas, {
         type: 'line',
         data: {
             labels: labels,
@@ -156,7 +208,7 @@ export async function makeCharts(user) {
         options: options2
     });
     // Create the first chart for followersDataset
-    const monthlyFollowChart = new Chart(followersMonthCanvas, {
+    new Chart(followersMonthCanvas, {
         type: 'bar',
         data: {
             labels: monthLabels,
@@ -166,7 +218,7 @@ export async function makeCharts(user) {
         options: options3
     });
     // Create the first chart for followersDataset
-    const monthlyPostsChart = new Chart(postsMonthCanvas, {
+    new Chart(postsMonthCanvas, {
         type: 'bar',
         data: {
             labels: monthLabels,
@@ -175,3 +227,16 @@ export async function makeCharts(user) {
         options: options4
     });
 }
+
+const baseUrl = 'https://skeetstats.xyz';
+// Use window.location to get the current URL
+const urlString = window.location.href;
+const url = new URL(urlString);
+// Extract the "handle" portion from the pathname
+const handle = url.pathname.split("/").pop() || '';
+// Remove '@', apostrophes, and quotation marks from the handle
+const cleanedHandle = handle.replace(/[@'"]/g, '');
+const user = cleanedHandle || 'skeetstats.xyz';
+await makeCharts(user);
+
+export { baseUrl, user };

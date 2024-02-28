@@ -14,15 +14,26 @@ export async function getStats(handle) {
 }
 export async function getCharts(handle) {
     let resdid = await handleOrDid(handle);
+    // First API call to fetch 30 days
     const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
     const respData = await response.json();
+    // Process data from 30 day
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         array.date = prettyDate;
     });
-    const stats = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
-    return stats;
+    const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
+    // Second API call to fetch monthly data
+    const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
+    const monthData = await monthResponse.json();
+    // Process data from monthly call
+    monthData.forEach(async (array, index) => {
+        const uglyDate = new Date(array.date);
+        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
+        array.date = prettyDate;
+    });
+    return { charts: chartsData, monthData };
 }
 export async function getMax(handle) {
     let resdid = await handleOrDid(handle);
@@ -34,6 +45,26 @@ export async function profileInfo(handle) {
     let resdid = await handleOrDid(handle);
     const response = await fetch(`${baseApiUrl}/api/profile/${resdid}`);
     const respData = await response.json();
+    const plcdir = `https://plc.directory/${resdid}/log/audit`;
+    try {
+        const audit = await fetch(plcdir);
+        const plcData = await audit.json();
+        if (Array.isArray(plcData) && plcData.length > 0) {
+            const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
+                year: '2-digit',
+                month: 'short',
+                day: 'numeric'
+            });
+            //console.log(created);
+            respData.created = created;
+        }
+        else {
+            console.log('No data returned or data is not in expected format.');
+        }
+    }
+    catch (error) {
+        console.error('Error fetching data:', error);
+    }
     return respData;
 }
 export async function getSuggestions(handle) {
@@ -50,7 +81,11 @@ export async function getFollowers(handle, cursor) {
     const followers = await respData.map(({ description, indexedAt, ...rest }) => rest);
     return followers;
 }
+const handleCache = {};
 export async function handleOrDid(handle) {
+    if (handleCache[handle]) {
+        return handleCache[handle];
+    }
     let resdid;
     let strippedHandle = handle.replace(/[@'"]/g, '');
     if (regex.test(handle)) {
@@ -67,8 +102,8 @@ export async function handleOrDid(handle) {
         }
         catch (error) {
             console.log(`Error resolving handle: ${error.message}`);
-            window.location.href = 'https://skeetstats.xyz/error';
         }
     }
+    handleCache[handle] = Promise.resolve(resdid);
     return resdid;
 }

@@ -96,7 +96,7 @@ document.getElementById('topnavbar').innerHTML = `
     </div>
 </div>
   `
-  const pageUrl = 'https://staging.skeetstats.xyz'
+  const pageUrl = 'https://skeetstats.xyz'
 
     // Get the current URL
     var currentUrl = window.location.href;

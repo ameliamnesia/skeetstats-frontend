@@ -1,23 +1,10 @@
 import { Tooltip } from 'bootstrap';
-import { Chart, registerables } from 'chart.js/auto';
 
 const baseApiUrl = 'https://skeetstats.xyz:8443';
 const regex = /^did:plc:[^@'"\,]+/;
 async function getStats(handle) {
     let resdid = await handleOrDid(handle);
     const response = await fetch(`${baseApiUrl}/api/stats/${resdid}`);
-    const respData = await response.json();
-    respData.forEach(async (array, index) => {
-        const uglyDate = new Date(array.date);
-        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        array.date = prettyDate;
-    });
-    const stats = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
-    return stats;
-}
-async function getCharts(handle) {
-    let resdid = await handleOrDid(handle);
-    const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
     const respData = await response.json();
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
@@ -37,6 +24,26 @@ async function profileInfo(handle) {
     let resdid = await handleOrDid(handle);
     const response = await fetch(`${baseApiUrl}/api/profile/${resdid}`);
     const respData = await response.json();
+    const plcdir = `https://plc.directory/${resdid}/log/audit`;
+    try {
+        const audit = await fetch(plcdir);
+        const plcData = await audit.json();
+        if (Array.isArray(plcData) && plcData.length > 0) {
+            const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
+                year: '2-digit',
+                month: 'short',
+                day: 'numeric'
+            });
+            //console.log(created);
+            respData.created = created;
+        }
+        else {
+            console.log('No data returned or data is not in expected format.');
+        }
+    }
+    catch (error) {
+        console.error('Error fetching data:', error);
+    }
     return respData;
 }
 async function getSuggestions(handle) {
@@ -46,7 +53,11 @@ async function getSuggestions(handle) {
     const suggests = await respData.map(({ banner, description, followersCount, followsCount, indexedAt, postsCount, ...rest }) => rest);
     return suggests;
 }
+const handleCache = {};
 async function handleOrDid(handle) {
+    if (handleCache[handle]) {
+        return handleCache[handle];
+    }
     let resdid;
     let strippedHandle = handle.replace(/[@'"]/g, '');
     if (regex.test(handle)) {
@@ -63,9 +74,9 @@ async function handleOrDid(handle) {
         }
         catch (error) {
             console.log(`Error resolving handle: ${error.message}`);
-            window.location.href = 'https://skeetstats.xyz/error';
         }
     }
+    handleCache[handle] = Promise.resolve(resdid);
     return resdid;
 }
 
@@ -75,15 +86,16 @@ async function renderProfile(user) {
     const data = {
         handle: gp.handle || '',
         displayName: gp.displayName ?? gp.handle,
-        imageUrl: gp.avatar,
-        banner: gp.banner,
+        imageUrl: gp.avatar ?? `${baseUrl$2}/images/blank.png`,
+        banner: gp.banner ?? `${baseUrl$2}/images/blankbanner.jpg`,
         linkUrl: "https://bsky.app/profile/" + user,
         followerCount: String(gp.followersCount),
         followsCount: String(gp.followsCount),
         totalPosts: String(gp.postsCount),
-        bio: gp.description,
+        bio: gp.description ?? '',
+        created: gp.created || ''
     };
-    const trunchandle = data.displayName.slice(0, 75) || data.handle.slice(0, 75);
+    const trunchandle = data.displayName.slice(0, 75) || data.handle.slice(0, 75) || 'error fetching handle';
     document.title = 'SkeetStats - ' + data.displayName;
     // Get the existing card, table, and card header elements
     document.getElementById('profileCard');
@@ -92,6 +104,7 @@ async function renderProfile(user) {
     // Update the card header with a link
     const link = document.createElement('a');
     link.href = data.linkUrl;
+    link.target = '_blank';
     link.textContent = trunchandle;
     userName.innerHTML = ''; // Clear existing content
     link.style.fontWeight = 'bold';
@@ -102,13 +115,8 @@ async function renderProfile(user) {
     // Create cells for the new row
     const bannerCell = profileRow.insertCell(0);
     // Set background image for the banner cell
-    bannerCell.setAttribute('colspan', '3');
-    if (data.banner != undefined) {
-        bannerCell.style.backgroundImage = `url(${data.banner})`;
-    }
-    else {
-        bannerCell.style.backgroundImage = `url(${baseUrl$2}/images/blankbanner.jpg)`;
-    }
+    bannerCell.setAttribute('colspan', '4');
+    bannerCell.style.backgroundImage = `url(${data.banner})`;
     bannerCell.style.backgroundSize = 'cover';
     // Create a new a element for the thumbnail
     const thumbnailLink = document.createElement('a');
@@ -117,12 +125,7 @@ async function renderProfile(user) {
     thumbnailLink.setAttribute('data-bs-target', '#imageModal');
     // Create thumbnail element
     const thumbnail = document.createElement('img');
-    if (data.imageUrl != undefined) {
-        thumbnail.src = data.imageUrl;
-    }
-    else {
-        thumbnail.src = `${baseUrl$2}/images/blank.png`;
-    }
+    thumbnail.src = data.imageUrl;
     thumbnail.alt = 'profile picture';
     thumbnail.width = 80;
     thumbnail.height = 80;
@@ -132,8 +135,8 @@ async function renderProfile(user) {
     bannerCell.appendChild(thumbnailLink);
     // Create a new row for the headers
     const headerRow = userTable.insertRow();
-    headerRow.classList.add('text-center', 'table-secondary');
-    const headers = ['followers', 'follows', 'posts'];
+    headerRow.classList.add('text-center');
+    const headers = ['followers', 'follows', 'posts', 'joined'];
     // Add headers to header row
     headers.forEach(headerText => {
         const th = document.createElement('th');
@@ -143,28 +146,22 @@ async function renderProfile(user) {
     });
     // Create a new row for the follower count, follows count, and total posts
     const countRow = userTable.insertRow();
-    countRow.classList.add("text-center", "text-body");
+    countRow.classList.add("text-center", "text-body", "text-break");
     const followersCountCell = countRow.insertCell(0);
-    followersCountCell.classList.add("text-body");
     const followsCountCell = countRow.insertCell(1);
-    followsCountCell.classList.add("text-body");
     const totalPostsCell = countRow.insertCell(2);
-    totalPostsCell.classList.add("text-body");
+    const joinedCell = countRow.insertCell(3);
     // Set content for follower count, follows count, and total posts cells
     followersCountCell.textContent = data.followerCount;
     followsCountCell.textContent = data.followsCount;
     totalPostsCell.textContent = data.totalPosts;
+    joinedCell.textContent = data.created;
     // Add event listener to thumbnailLink to trigger the modal
     thumbnailLink.addEventListener('click', () => {
         const modalTitle = document.getElementById('pfpModalLabel');
         modalTitle.textContent = trunchandle;
         const modalText = document.getElementById('modalText');
-        if (data.bio == undefined) {
-            modalText.innerText = '';
-        }
-        else {
-            modalText.innerText = data.bio;
-        }
+        modalText.innerText = data.bio;
         const fullSizeImage = document.getElementById('fullSizeImage');
         fullSizeImage.src = thumbnail.src;
     });
@@ -295,94 +292,6 @@ async function createTableFromStatsData(user) {
     table.classList.add('table', 'table-striped', 'table-hover');
 }
 
-// Register necessary modules
-Chart.register(...registerables);
-async function makeCharts(user) {
-    const chartData = await getCharts(user);
-    const labels = chartData.map(item => item.date);
-    const followersDataset = {
-        label: 'followers',
-        fill: true,
-        data: chartData.map(item => item.followersCount),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 5
-    };
-    const followsDataset = {
-        label: 'following',
-        fill: true,
-        data: chartData.map(item => item.followsCount),
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 5
-    };
-    const postsDataset = {
-        label: 'posts',
-        fill: true,
-        data: chartData.map(item => item.postsCount),
-        backgroundColor: 'rgba(255, 206, 86, 0.2)',
-        borderColor: 'rgba(255, 206, 86, 1)',
-        borderWidth: 5
-    };
-    Chart.defaults.font.size = 20;
-    // Configuration options
-    const options = {
-        scales: {
-            y: {
-                beginAtZero: false
-            }
-        },
-        plugins: {
-            legend: {
-                display: true
-            },
-            tooltip: {
-                displayColors: false
-            }
-        },
-        maintainAspectRatio: false, // To make the chart responsive
-        responsive: true,
-    };
-    const options2 = {
-        scales: {
-            y: {
-                beginAtZero: false
-            }
-        },
-        plugins: {
-            legend: {
-                display: false
-            },
-            tooltip: {
-                displayColors: false
-            }
-        },
-        maintainAspectRatio: false, // To make the chart responsive
-        responsive: true
-    };
-    // Get the canvas elements by the updated ids
-    const followersCanvas = document.getElementById('followers-chart-container');
-    const postsCanvas = document.getElementById('posts-chart-container');
-    // Create the first chart for followersDataset
-    new Chart(followersCanvas, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [followersDataset, followsDataset]
-        },
-        options: options
-    });
-    // Create the second chart for postsDataset
-    new Chart(postsCanvas, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [postsDataset]
-        },
-        options: options2
-    });
-}
-
 async function bestDays(user) {
     const data = await getMax(user);
     try {
@@ -438,19 +347,24 @@ async function bestDays(user) {
     }
 }
 
+let isSuggestedTableCreated = false;
 const baseUrl = 'https://skeetstats.xyz';
-// Use window.location to get the current URL
 const urlString = window.location.href;
 const url = new URL(urlString);
-// Extract the "handle" portion from the pathname
 const handle = url.pathname.split("/").pop() || '';
-// Remove '@', apostrophes, and quotation marks from the handle
 const cleanedHandle = handle.replace(/[@'"]/g, '');
 const user = cleanedHandle || 'skeetstats.xyz';
 await renderProfile(user);
-await createSuggestedTable(user);
 await createTableFromStatsData(user);
 await bestDays(user);
-await makeCharts(user);
+const interactionsButton = document.getElementById("interactions");
+if (interactionsButton) {
+    interactionsButton.addEventListener("click", async () => {
+        if (!isSuggestedTableCreated) {
+            await createSuggestedTable(user);
+            isSuggestedTableCreated = true;
+        }
+    });
+}
 
 export { baseUrl, user };
