@@ -38,21 +38,37 @@
           </div>
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center p-0 m-0 bg-dark">
-              <h5 class="m-0 text-center text-body flex-grow-1">7 day stats</h5>
+              <h5 class="m-0 text-center text-body text-body-emphasis flex-grow-1">7 day stats</h5>
               <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#statsCollapse" aria-expanded="true">
                 <span class="text-body align-middle">
-                  <i class="bi bi-chevron-double-up"></i>&nbsp;&nbsp; hide <i class="bi bi-chevron-double-up"></i>
+                  <i class="bi bi-chevron-double-up"></i>&nbsp;&nbsp; hide &nbsp;&nbsp; <i class="bi bi-chevron-double-up"></i>
                 </span>
               </button>
             </div>
             <div class="collapse show" id="statsCollapse">
-              <div class="card-body p-0 m-0">
+              <div class="card-body p-0 mb-1 m-0">
                 <!-- Table for stats -->
-                <table class="table table-dark mb-0 text-center w-100 table-sm align-middle table-borderless" id="statsTable">
+                <table class="table mb-0 table-striped w-100 table-sm align-middle table-hover align-middle text-center" id="statsTable">
+                  <tbody></tbody>
                 </table>
               </div>
+            <div class="card-footer d-flex justify-content-between p-0 m-0">
+              <div class="btn-group w-100" role="group" aria-label="7 day stats pagination">
+                <button class="btn btn-primary w-50 py-1" type="button" id="prevPageBtn">
+                  <span class="align-middle resp-text">
+                    <i class="bi bi-chevron-double-left"></i>
+                    forward</span>
+                </button>
+                <button class="btn btn-primary w-50 py-1" type="button" id="nextPageBtn">
+                  <span class="align-middle resp-text">
+                    back
+                    <i class="bi bi-chevron-double-right"></i>
+                  </span>
+                </button>
+                </div>
             </div>
           </div>
+        </div>
 
 
         </div>
