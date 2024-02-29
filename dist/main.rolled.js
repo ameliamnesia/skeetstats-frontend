@@ -2,9 +2,13 @@ import { Tooltip } from 'bootstrap';
 
 const baseApiUrl = 'https://skeetstats.xyz:8443';
 const regex = /^did:plc:[^@'"\,]+/;
-async function getStats(handle) {
+async function getStats(handle, page) {
     let resdid = await handleOrDid(handle);
-    const response = await fetch(`${baseApiUrl}/api/stats/${resdid}`);
+    let url = `${baseApiUrl}/api/stats/${resdid}`;
+    if (page) {
+        url += `?page=${page}`;
+    }
+    const response = await fetch(url);
     const respData = await response.json();
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
@@ -34,7 +38,6 @@ async function profileInfo(handle) {
                 month: 'short',
                 day: 'numeric'
             });
-            //console.log(created);
             respData.created = created;
         }
         else {
@@ -240,38 +243,38 @@ async function createSuggestedTable(user) {
     }
 }
 
-//import { user } from './functions.js';
-async function createTableFromStatsData(user) {
-    const statsData = await getStats(user);
+async function statsHeaders() {
     const table = document.getElementById('statsTable');
     if (table) {
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
         const headers = ['date', 'followers', 'follows', 'posts'];
-        // Add headers to header row
         headers.forEach(headerText => {
             const th = document.createElement('th');
             th.classList.add('text-body');
             th.textContent = headerText;
             headerRow.appendChild(th);
         });
-        // Add header row to the table
         thead.appendChild(headerRow);
         table.appendChild(thead);
-        // Create table body if it doesn't exist
+    }
+}
+async function createTableFromStatsData(user, page = 1) {
+    const statsData = await getStats(user, page);
+    const table = document.getElementById('statsTable');
+    if (table) {
         let tableBody = table.querySelector('tbody');
         if (!tableBody) {
             tableBody = document.createElement('tbody');
             table.appendChild(tableBody);
         }
+        tableBody.innerHTML = '';
         statsData.forEach((item) => {
             const row = document.createElement('tr');
             for (const key in item) {
-                // Iterate over the keys and create a cell for each value
                 if (item.hasOwnProperty(key)) {
                     const cell = document.createElement('td');
                     cell.textContent = item[key].toString();
-                    //cell.classList.add("w-100");
                     cell.classList.add("text-body");
                     row.appendChild(cell);
                 }
@@ -287,6 +290,12 @@ async function createTableFromStatsData(user) {
             noDataCell.textContent = 'no data yet, if the user is opted in it will update daily at 11PM EST';
             row.appendChild(noDataCell);
             tableBody.appendChild(row);
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            nextPageBtn.disabled = true;
+        }
+        else {
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            nextPageBtn.disabled = false;
         }
     }
     table.classList.add('table', 'table-striped', 'table-hover');
@@ -348,6 +357,7 @@ async function bestDays(user) {
 }
 
 let isSuggestedTableCreated = false;
+let currentPage = 1;
 const baseUrl = 'https://skeetstats.xyz';
 const urlString = window.location.href;
 const url = new URL(urlString);
@@ -355,6 +365,7 @@ const handle = url.pathname.split("/").pop() || '';
 const cleanedHandle = handle.replace(/[@'"]/g, '');
 const user = cleanedHandle || 'skeetstats.xyz';
 await renderProfile(user);
+await statsHeaders();
 await createTableFromStatsData(user);
 await bestDays(user);
 const interactionsButton = document.getElementById("interactions");
@@ -365,6 +376,26 @@ if (interactionsButton) {
             isSuggestedTableCreated = true;
         }
     });
+}
+document.getElementById('prevPageBtn')?.addEventListener('click', async () => {
+    currentPage--;
+    await createTableFromStatsData(user, currentPage);
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    if (prevPageBtn && currentPage === 1) {
+        prevPageBtn.disabled = true;
+    }
+});
+document.getElementById('nextPageBtn')?.addEventListener('click', async () => {
+    currentPage++;
+    await createTableFromStatsData(user, currentPage);
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    if (prevPageBtn && currentPage != 1) {
+        prevPageBtn.disabled = false;
+    }
+});
+const prevPageBtn = document.getElementById('prevPageBtn');
+if (prevPageBtn && currentPage === 1) {
+    prevPageBtn.disabled = true;
 }
 
 export { baseUrl, user };

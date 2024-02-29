@@ -12,9 +12,13 @@ export interface ProcessedStatsRow extends StatsData {
   postsCountDiff?: number; // additional column
 }
 
-export async function getStats(handle: string): Promise<StatsData[]> {
-  let resdid = await handleOrDid(handle)
-  const response = await fetch(`${baseApiUrl}/api/stats/${resdid}`)
+export async function getStats(handle, page?: number) {
+  let resdid = await handleOrDid(handle);
+  let url = `${baseApiUrl}/api/stats/${resdid}`;
+  if (page) {
+    url += `?page=${page}`;
+  }
+  const response = await fetch(url);
   const respData = await response.json();
   respData.forEach(async (array, index) => {
     const uglyDate = new Date(array.date);
@@ -22,31 +26,27 @@ export async function getStats(handle: string): Promise<StatsData[]> {
     array.date = prettyDate;
   });
   const stats = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
-  return stats
+  return stats;
 }
 
 export async function getCharts(handle) {
-    let resdid = await handleOrDid(handle);
-    // First API call to fetch 30 days
-    const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
-    const respData = await response.json();
-    // Process data from 30 day
-    respData.forEach(async (array, index) => {
-        const uglyDate = new Date(array.date);
-        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        array.date = prettyDate;
-    });
-    const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
-    // Second API call to fetch monthly data
-    const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
-    const monthData = await monthResponse.json();
-    // Process data from monthly call
-    monthData.forEach(async (array, index) => {
-        const uglyDate = new Date(array.date);
-        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
-        array.date = prettyDate;
-    });
-    return { charts: chartsData, monthData };
+  let resdid = await handleOrDid(handle);
+  const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
+  const respData = await response.json();
+  respData.forEach(async (array, index) => {
+    const uglyDate = new Date(array.date);
+    const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    array.date = prettyDate;
+  });
+  const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
+  const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
+  const monthData = await monthResponse.json();
+  monthData.forEach(async (array, index) => {
+    const uglyDate = new Date(array.date);
+    const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
+    array.date = prettyDate;
+  });
+  return { charts: chartsData, monthData };
 }
 
 export async function getMax(handle: string): Promise<any> {
@@ -62,21 +62,20 @@ export async function profileInfo(handle: string): Promise<any> {
   const respData = await response.json();
   const plcdir = `https://plc.directory/${resdid}/log/audit`;
   try {
-      const audit = await fetch(plcdir);
-      const plcData = await audit.json();
-      if (Array.isArray(plcData) && plcData.length > 0) {
-          const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
-            year: '2-digit',
-            month: 'short',
-            day: 'numeric'
-        });
-          //console.log(created);
-          respData.created = created
-      } else {
-          console.log('No data returned or data is not in expected format.');
-      }
+    const audit = await fetch(plcdir);
+    const plcData = await audit.json();
+    if (Array.isArray(plcData) && plcData.length > 0) {
+      const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
+        year: '2-digit',
+        month: 'short',
+        day: 'numeric'
+      });
+      respData.created = created
+    } else {
+      console.log('No data returned or data is not in expected format.');
+    }
   } catch (error) {
-      console.error('Error fetching data:', error);
+    console.error('Error fetching data:', error);
   }
   return respData
 }

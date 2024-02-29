@@ -49,7 +49,7 @@
               <h5 class="m-0 text-center text-body text-body-emphasis flex-grow-1">7 day stats</h5>
               <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#statsCollapse" aria-expanded="true">
                 <span class="text-body align-middle">
-                  <i class="bi bi-chevron-double-up"></i>&nbsp;&nbsp; hide <i class="bi bi-chevron-double-up"></i>
+                  <i class="bi bi-chevron-double-up"></i>&nbsp;&nbsp; hide &nbsp;&nbsp; <i class="bi bi-chevron-double-up"></i>
                 </span>
               </button>
             </div>
@@ -60,6 +60,19 @@
                   <tbody></tbody>
                 </table>
               </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between p-0 m-0">
+              <button class="btn btn-primary w-50" type="button" id="prevPageBtn">
+                <span class="text-body align-middle">
+                  <i class="bi bi-chevron-double-left"></i>
+                  forward</span>
+              </button>
+              <button class="btn btn-primary w-50" type="button" id="nextPageBtn">
+                <span class="text-body align-middle">
+                  back
+                  <i class="bi bi-chevron-double-right"></i>
+                </span>
+              </button>
             </div>
           </div>
           <br>
@@ -81,7 +94,7 @@
               <button class="btn btn-dark" type="button" data-bs-toggle="collapse"
                 data-bs-target="#suggestionsCollapse" aria-expanded="true" id="interactions">
                 <span class="text-body align-middle">
-                  <i class="bi bi-chevron-double-down"></i>&nbsp;&nbsp; show <i class="bi bi-chevron-double-down"></i></span>
+                  <i class="bi bi-chevron-double-down"></i>&nbsp;&nbsp; show &nbsp;&nbsp; <i class="bi bi-chevron-double-down"></i></span>
               </button>
             </div>
             <div class="collapse" id="suggestionsCollapse">
@@ -168,7 +181,7 @@
   <script src="https://skeetstats.xyz/js/collapse-stats.js"></script>
 
   <script type="module" src="https://skeetstats.xyz/js/autocomplete.js"></script>
-  <script type="module" src="https://skeetstats.xyz/main.rolled.js"></script>
+  <script type="module" src="https://skeetstats.xyz/main.rolled.js?v=4"></script>
   <script type="module" src="https://skeetstats.xyz/charts.rolled.js"></script>
 
   <script defer data-goatcounter="https://goat.skeetstats.xyz/count" async src="https://skeetstats.xyz/js/goat.js"></script>

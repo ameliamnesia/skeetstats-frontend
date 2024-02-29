@@ -1,8 +1,12 @@
 const baseApiUrl = 'https://skeetstats.xyz:8443';
 const regex = /^did:plc:[^@'"\,]+/;
-export async function getStats(handle) {
+export async function getStats(handle, page) {
     let resdid = await handleOrDid(handle);
-    const response = await fetch(`${baseApiUrl}/api/stats/${resdid}`);
+    let url = `${baseApiUrl}/api/stats/${resdid}`;
+    if (page) {
+        url += `?page=${page}`;
+    }
+    const response = await fetch(url);
     const respData = await response.json();
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
@@ -14,20 +18,16 @@ export async function getStats(handle) {
 }
 export async function getCharts(handle) {
     let resdid = await handleOrDid(handle);
-    // First API call to fetch 30 days
     const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
     const respData = await response.json();
-    // Process data from 30 day
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         array.date = prettyDate;
     });
     const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
-    // Second API call to fetch monthly data
     const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
     const monthData = await monthResponse.json();
-    // Process data from monthly call
     monthData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
@@ -55,7 +55,6 @@ export async function profileInfo(handle) {
                 month: 'short',
                 day: 'numeric'
             });
-            //console.log(created);
             respData.created = created;
         }
         else {
