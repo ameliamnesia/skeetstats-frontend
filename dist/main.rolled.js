@@ -34,7 +34,7 @@ async function profileInfo(handle) {
         const plcData = await audit.json();
         if (Array.isArray(plcData) && plcData.length > 0) {
             const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
-                year: '2-digit',
+                year: 'numeric',
                 month: 'short',
                 day: 'numeric'
             });

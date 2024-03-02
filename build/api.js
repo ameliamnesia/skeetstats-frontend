@@ -29,7 +29,9 @@ export async function getCharts(handle) {
     const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
     const monthData = await monthResponse.json();
     monthData.forEach(async (array, index) => {
-        const uglyDate = new Date(array.date);
+        const [year, month] = array.month.split('-');
+        const monthIndex = parseInt(month, 10) - 1;
+        const uglyDate = new Date(parseInt(year), monthIndex);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
         array.date = prettyDate;
     });
@@ -51,7 +53,7 @@ export async function profileInfo(handle) {
         const plcData = await audit.json();
         if (Array.isArray(plcData) && plcData.length > 0) {
             const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
-                year: '2-digit',
+                year: 'numeric',
                 month: 'short',
                 day: 'numeric'
             });

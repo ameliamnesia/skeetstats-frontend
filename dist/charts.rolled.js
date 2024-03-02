@@ -4,22 +4,20 @@ const baseApiUrl = 'https://skeetstats.xyz:8443';
 const regex = /^did:plc:[^@'"\,]+/;
 async function getCharts(handle) {
     let resdid = await handleOrDid(handle);
-    // First API call to fetch 30 days
     const response = await fetch(`${baseApiUrl}/api/charts/${resdid}`);
     const respData = await response.json();
-    // Process data from 30 day
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         array.date = prettyDate;
     });
     const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
-    // Second API call to fetch monthly data
     const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
     const monthData = await monthResponse.json();
-    // Process data from monthly call
     monthData.forEach(async (array, index) => {
-        const uglyDate = new Date(array.date);
+        const [year, month] = array.month.split('-');
+        const monthIndex = parseInt(month, 10) - 1;
+        const uglyDate = new Date(parseInt(year), monthIndex);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });
         array.date = prettyDate;
     });
@@ -229,12 +227,9 @@ async function makeCharts(user) {
 }
 
 const baseUrl = 'https://skeetstats.xyz';
-// Use window.location to get the current URL
 const urlString = window.location.href;
 const url = new URL(urlString);
-// Extract the "handle" portion from the pathname
 const handle = url.pathname.split("/").pop() || '';
-// Remove '@', apostrophes, and quotation marks from the handle
 const cleanedHandle = handle.replace(/[@'"]/g, '');
 const user = cleanedHandle || 'skeetstats.xyz';
 await makeCharts(user);
