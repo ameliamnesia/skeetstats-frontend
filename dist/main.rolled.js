@@ -139,7 +139,7 @@ async function renderProfile(user) {
     // Create a new row for the headers
     const headerRow = userTable.insertRow();
     headerRow.classList.add('text-center');
-    const headers = ['followers', 'follows', 'posts', 'joined'];
+    const headers = ['followers', 'following', 'posts', 'joined'];
     // Add headers to header row
     headers.forEach(headerText => {
         const th = document.createElement('th');
@@ -248,7 +248,7 @@ async function statsHeaders() {
     if (table) {
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
-        const headers = ['date', 'followers', 'follows', 'posts'];
+        const headers = ['date', 'followers', 'following', 'posts'];
         headers.forEach(headerText => {
             const th = document.createElement('th');
             th.classList.add('text-body');

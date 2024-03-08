@@ -4,7 +4,7 @@ export async function statsHeaders() {
   if (table) {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
-    const headers = ['date', 'followers', 'follows', 'posts'];
+    const headers = ['date', 'followers', 'following', 'posts'];
     headers.forEach(headerText => {
       const th = document.createElement('th');
       th.classList.add('text-body')

@@ -2,9 +2,13 @@ import { Tooltip } from 'bootstrap';
 
 const baseApiUrl = 'https://skeetstats.xyz:8443';
 const regex = /^did:plc:[^@'"\,]+/;
-async function getStats(handle) {
+async function getStats(handle, page) {
     let resdid = await handleOrDid(handle);
-    const response = await fetch(`${baseApiUrl}/api/stats/${resdid}`);
+    let url = `${baseApiUrl}/api/stats/${resdid}`;
+    if (page) {
+        url += `?page=${page}`;
+    }
+    const response = await fetch(url);
     const respData = await response.json();
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
@@ -18,6 +22,25 @@ async function profileInfo(handle) {
     let resdid = await handleOrDid(handle);
     const response = await fetch(`${baseApiUrl}/api/profile/${resdid}`);
     const respData = await response.json();
+    const plcdir = `https://plc.directory/${resdid}/log/audit`;
+    try {
+        const audit = await fetch(plcdir);
+        const plcData = await audit.json();
+        if (Array.isArray(plcData) && plcData.length > 0) {
+            const created = new Date(plcData[0].createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            respData.created = created;
+        }
+        else {
+            console.log('No data returned or data is not in expected format.');
+        }
+    }
+    catch (error) {
+        console.error('Error fetching data:', error);
+    }
     return respData;
 }
 async function getFollowers(handle, cursor) {
@@ -27,7 +50,11 @@ async function getFollowers(handle, cursor) {
     const followers = await respData.map(({ description, indexedAt, ...rest }) => rest);
     return followers;
 }
+const handleCache = {};
 async function handleOrDid(handle) {
+    if (handleCache[handle]) {
+        return handleCache[handle];
+    }
     let resdid;
     let strippedHandle = handle.replace(/[@'"]/g, '');
     if (regex.test(handle)) {
@@ -46,6 +73,7 @@ async function handleOrDid(handle) {
             console.log(`Error resolving handle: ${error.message}`);
         }
     }
+    handleCache[handle] = Promise.resolve(resdid);
     return resdid;
 }
 
@@ -55,15 +83,16 @@ async function renderProfile(user) {
     const data = {
         handle: gp.handle || '',
         displayName: gp.displayName ?? gp.handle,
-        imageUrl: gp.avatar,
-        banner: gp.banner,
+        imageUrl: gp.avatar ?? `${baseUrl$1}/images/blank.png`,
+        banner: gp.banner ?? `${baseUrl$1}/images/blankbanner.jpg`,
         linkUrl: "https://bsky.app/profile/" + user,
         followerCount: String(gp.followersCount),
         followsCount: String(gp.followsCount),
         totalPosts: String(gp.postsCount),
-        bio: gp.description,
+        bio: gp.description ?? '',
+        created: gp.created || ''
     };
-    const trunchandle = data.displayName.slice(0, 75) || data.handle.slice(0, 75);
+    const trunchandle = data.displayName.slice(0, 75) || data.handle.slice(0, 75) || 'error fetching handle';
     document.title = 'SkeetStats - ' + data.displayName;
     // Get the existing card, table, and card header elements
     document.getElementById('profileCard');
@@ -72,6 +101,7 @@ async function renderProfile(user) {
     // Update the card header with a link
     const link = document.createElement('a');
     link.href = data.linkUrl;
+    link.target = '_blank';
     link.textContent = trunchandle;
     userName.innerHTML = ''; // Clear existing content
     link.style.fontWeight = 'bold';
@@ -82,13 +112,8 @@ async function renderProfile(user) {
     // Create cells for the new row
     const bannerCell = profileRow.insertCell(0);
     // Set background image for the banner cell
-    bannerCell.setAttribute('colspan', '3');
-    if (data.banner != undefined) {
-        bannerCell.style.backgroundImage = `url(${data.banner})`;
-    }
-    else {
-        bannerCell.style.backgroundImage = `url(${baseUrl$1}/images/blankbanner.jpg)`;
-    }
+    bannerCell.setAttribute('colspan', '4');
+    bannerCell.style.backgroundImage = `url(${data.banner})`;
     bannerCell.style.backgroundSize = 'cover';
     // Create a new a element for the thumbnail
     const thumbnailLink = document.createElement('a');
@@ -97,12 +122,7 @@ async function renderProfile(user) {
     thumbnailLink.setAttribute('data-bs-target', '#imageModal');
     // Create thumbnail element
     const thumbnail = document.createElement('img');
-    if (data.imageUrl != undefined) {
-        thumbnail.src = data.imageUrl;
-    }
-    else {
-        thumbnail.src = `${baseUrl$1}/images/blank.png`;
-    }
+    thumbnail.src = data.imageUrl;
     thumbnail.alt = 'profile picture';
     thumbnail.width = 80;
     thumbnail.height = 80;
@@ -112,8 +132,8 @@ async function renderProfile(user) {
     bannerCell.appendChild(thumbnailLink);
     // Create a new row for the headers
     const headerRow = userTable.insertRow();
-    headerRow.classList.add('text-center', 'table-secondary');
-    const headers = ['followers', 'follows', 'posts'];
+    headerRow.classList.add('text-center');
+    const headers = ['followers', 'following', 'posts', 'joined'];
     // Add headers to header row
     headers.forEach(headerText => {
         const th = document.createElement('th');
@@ -123,28 +143,22 @@ async function renderProfile(user) {
     });
     // Create a new row for the follower count, follows count, and total posts
     const countRow = userTable.insertRow();
-    countRow.classList.add("text-center", "text-body");
+    countRow.classList.add("text-center", "text-body", "text-break");
     const followersCountCell = countRow.insertCell(0);
-    followersCountCell.classList.add("text-body");
     const followsCountCell = countRow.insertCell(1);
-    followsCountCell.classList.add("text-body");
     const totalPostsCell = countRow.insertCell(2);
-    totalPostsCell.classList.add("text-body");
+    const joinedCell = countRow.insertCell(3);
     // Set content for follower count, follows count, and total posts cells
     followersCountCell.textContent = data.followerCount;
     followsCountCell.textContent = data.followsCount;
     totalPostsCell.textContent = data.totalPosts;
+    joinedCell.textContent = data.created;
     // Add event listener to thumbnailLink to trigger the modal
     thumbnailLink.addEventListener('click', () => {
         const modalTitle = document.getElementById('pfpModalLabel');
         modalTitle.textContent = trunchandle;
         const modalText = document.getElementById('modalText');
-        if (data.bio == undefined) {
-            modalText.innerText = '';
-        }
-        else {
-            modalText.innerText = data.bio;
-        }
+        modalText.innerText = data.bio;
         const fullSizeImage = document.getElementById('fullSizeImage');
         fullSizeImage.src = thumbnail.src;
     });
@@ -222,38 +236,22 @@ async function fetchFollowers(user) {
     });
 }
 
-//import { user } from './functions.js';
-async function createTableFromStatsData(user) {
-    const statsData = await getStats(user);
+async function createTableFromStatsData(user, page = 1) {
+    const statsData = await getStats(user, page);
     const table = document.getElementById('statsTable');
     if (table) {
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-        const headers = ['date', 'followers', 'follows', 'posts'];
-        // Add headers to header row
-        headers.forEach(headerText => {
-            const th = document.createElement('th');
-            th.classList.add('text-body');
-            th.textContent = headerText;
-            headerRow.appendChild(th);
-        });
-        // Add header row to the table
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-        // Create table body if it doesn't exist
         let tableBody = table.querySelector('tbody');
         if (!tableBody) {
             tableBody = document.createElement('tbody');
             table.appendChild(tableBody);
         }
+        tableBody.innerHTML = '';
         statsData.forEach((item) => {
             const row = document.createElement('tr');
             for (const key in item) {
-                // Iterate over the keys and create a cell for each value
                 if (item.hasOwnProperty(key)) {
                     const cell = document.createElement('td');
                     cell.textContent = item[key].toString();
-                    //cell.classList.add("w-100");
                     cell.classList.add("text-body");
                     row.appendChild(cell);
                 }
@@ -269,6 +267,12 @@ async function createTableFromStatsData(user) {
             noDataCell.textContent = 'no data yet, if the user is opted in it will update daily at 11PM EST';
             row.appendChild(noDataCell);
             tableBody.appendChild(row);
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            nextPageBtn.disabled = true;
+        }
+        else {
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            nextPageBtn.disabled = false;
         }
     }
     table.classList.add('table', 'table-striped', 'table-hover');

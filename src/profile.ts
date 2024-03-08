@@ -63,7 +63,7 @@ bannerCell.appendChild(thumbnailLink);
 // Create a new row for the headers
 const headerRow = userTable.insertRow();
 headerRow.classList.add('text-center')
-const headers = ['followers', 'follows', 'posts', 'joined'];
+const headers = ['followers', 'following', 'posts', 'joined'];
 // Add headers to header row
 headers.forEach(headerText => {
   const th = document.createElement('th');
