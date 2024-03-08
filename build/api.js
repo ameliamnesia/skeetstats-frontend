@@ -29,7 +29,7 @@ export async function getCharts(handle) {
     const monthResponse = await fetch(`${baseApiUrl}/api/monthly/${resdid}`);
     const monthData = await monthResponse.json();
     monthData.forEach(async (array, index) => {
-        const [year, month] = array.month.split('-');
+        const [month, year] = array.date.split('-');
         const monthIndex = parseInt(month, 10) - 1;
         const uglyDate = new Date(parseInt(year), monthIndex);
         const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short' });

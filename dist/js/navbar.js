@@ -38,7 +38,7 @@ document.getElementById('topnavbar').innerHTML = `
       <form class="d-flex search-form" onsubmit="submitSearch(event)">
         <div class="input-group w-auto">
           <span class="input-group-text" id="basic-addon1">@</span>
-          <input type="text" class="form-control" placeholder="yourhandle.bsky.app" autocomplete="on"
+          <input type="text" class="form-control" placeholder="yourhandle.bsky.social" autocomplete="on"
             aria-label="Search" aria-describedby="search-btn" id="searchInput">
             <button class="btn btn-sm btn-dark" type="submit" id="search-btn"><i class="bi bi-search"></i></button>
         </div>
