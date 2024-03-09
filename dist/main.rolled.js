@@ -277,7 +277,6 @@ const url = new URL(urlString);
 const handle = url.pathname.split("/").pop() || '';
 const cleanedHandle = handle.replace(/[@'"]/g, '');
 const user = cleanedHandle || 'skeetstats.xyz';
-//await renderProfile(user);
 await statsHeaders();
 await createTableFromStatsData(user);
 await bestDays(user);
