@@ -108,7 +108,7 @@ async function renderProfile(user) {
     // Create a new row for the headers
     const headerRow = userTable.insertRow();
     headerRow.classList.add('text-center');
-    const headers = ['followers', 'following', 'posts', 'joined'];
+    const headers = ['joined', 'followers', 'following', 'posts'];
     // Add headers to header row
     headers.forEach(headerText => {
         const th = document.createElement('th');
@@ -119,10 +119,10 @@ async function renderProfile(user) {
     // Create a new row for the follower count, follows count, and total posts
     const countRow = userTable.insertRow();
     countRow.classList.add("text-center", "text-body", "text-break");
-    const followersCountCell = countRow.insertCell(0);
-    const followsCountCell = countRow.insertCell(1);
-    const totalPostsCell = countRow.insertCell(2);
-    const joinedCell = countRow.insertCell(3);
+    const joinedCell = countRow.insertCell(0);
+    const followersCountCell = countRow.insertCell(1);
+    const followsCountCell = countRow.insertCell(2);
+    const totalPostsCell = countRow.insertCell(3);
     // Set content for follower count, follows count, and total posts cells
     followersCountCell.textContent = data.followerCount;
     followsCountCell.textContent = data.followsCount;

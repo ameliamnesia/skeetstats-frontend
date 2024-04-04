@@ -67,12 +67,13 @@ document.getElementById('modalsDiv').innerHTML = `
       </div>
       <div class="modal-body text-body">
       <ul class="list-group list-group-flush">
-      <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:c3c54quc4xysc6khc7jeppns"><i class="bi bi-person-hearts"></i> &nbsp; phoebe </a></li>
       <li class="list-group-item"><a class="link-info" arget="_blank" href="https://bsky.app/profile/did:plc:wzsilnxf24ehtmmc3gssy5bu"><i class="bi bi-person-hearts"></i> &nbsp; mark</a></li>
       <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:yj2pd3wzceorf3bcawceoqfk"><i class="bi bi-person-hearts"></i> &nbsp; imogen</a></li>
       <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:f5lxswkf3gcjwaamrija5t6i"><i class="bi bi-person-hearts"></i> &nbsp; hesse</a></li>
       <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:c5lcwcbubqa3rvbjq4awpy7q"><i class="bi bi-person-hearts"></i> &nbsp; tay</a></li>
       <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:r7s47dgnul2q2tn2ya3re6ty"><i class="bi bi-person-hearts"></i> &nbsp; stel</a></li>
+      <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:jfhpnnst6flqway4eaeqzj2a"><i class="bi bi-person-hearts"></i> &nbsp; bossett</a></li>
+      <li class="list-group-item"><a class="link-info" target="_blank" href="https://bsky.app/profile/did:plc:wnm3vhw6qqhsab6sm6xjcsgr"><i class="bi bi-person-hearts"></i> &nbsp; borderless</a></li>
       </ul>
       </div>
       <div class="modal-footer pb-0 mb-0">

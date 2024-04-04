@@ -8,7 +8,7 @@ async function getCharts(handle) {
     const respData = await response.json();
     respData.forEach(async (array, index) => {
         const uglyDate = new Date(array.date);
-        const prettyDate = uglyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const prettyDate = uglyDate.toLocaleString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
         array.date = prettyDate;
     });
     const chartsData = await respData.map(({ did, idstats, postsDifference, ...rest }) => rest);
